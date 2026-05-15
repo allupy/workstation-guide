@@ -1,5 +1,8 @@
 ## 网络资源
 
+### docker的网络访问
+请参考docker部分
+
 ### 代理
 工作站配置了http代理，一般情况下默认启动了代理
 ```
@@ -9,8 +12,6 @@
 -e https_proxy=http://127.0.0.1:7897 \
 ```
 
-### docker的网络访问
-请参考docker部分
 
 #### github的ssh配置
 请用户先配置好ssh连接github所需要的密钥
