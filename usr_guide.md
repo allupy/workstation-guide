@@ -70,7 +70,7 @@ chmod 644 ~/.xsession
 - 这些资源是 **可读写的**，但为了保证环境的稳定性，建议大家在修改之前务必确认自己清楚操作的影响。  
 
 官方教学文档：  
-[OmniLRS cfg 环境创建与管理方法](https://github.com/OmniLRS/OmniLRS/wiki/getting_started#getting-started)
+[OmniLRS cfg 环境创建与管理方法](https://github.com/OmniLRS/OmniLRS/wiki/environments#environments)
 
 ---
 
