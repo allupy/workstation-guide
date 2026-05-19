@@ -6,10 +6,10 @@
 ### 代理
 工作站配置了http代理，一般情况下默认启动了代理
 ```
--e HTTP_PROXY=http://127.0.0.1:7897 \
--e HTTPS_PROXY=http://127.0.0.1:7897 \
--e http_proxy=http://127.0.0.1:7897 \
--e https_proxy=http://127.0.0.1:7897 \
+-e HTTP_PROXY=http://192.168.151.57:7897 \
+-e HTTPS_PROXY=http://192.168.151.57:7897 \
+-e http_proxy=http://192.168.151.57:7897 \
+-e https_proxy=http://192.168.151.57:7897 \
 ```
 
 
@@ -67,7 +67,7 @@ chmod 644 ~/.xsession
 ### OmniLRS
 #### 公共资源与用户组
 - 该镜像由多人同时使用，且环境依赖的资产占用存储空间较大，不适合各用户单独存储。  
-- 我们将 **`/srv/omnilrs`** 设置为 **omnilrs 用户组的共享空间**，用于存放 OmniLRS 启动所依赖的静态资源。  
+- 我们将 **`/mnt/intel_ssd/omnilrs`** 设置为 **omnilrs 用户组的共享空间**，用于存放 OmniLRS 启动所依赖的静态资源。  
 - 这些资源是 **可读写的**，但为了保证环境的稳定性，建议大家在修改之前务必确认自己清楚操作的影响。  
 
 官方教学文档：  
@@ -83,7 +83,19 @@ chmod 644 ~/.xsession
 
 ---
 
+#### Omnilrs对应的ros2环境
+建议搭配另外一个docker使用，我们已经搭建好了桥接器，只需要启动一个新的终端，启动该docker，就能使用ros命令与isaacsim进行交互
 
+将ros2的文件夹放置到了/mnt/intel_ssd/omnilrs/omnilrs_ros2
+
+进入该目录下，执行./docker/run_moveit.sh
+
+该环境同时也配置了moveit，使用前需要执行命令：
+```bash
+source ./install/setup.bash
+source /ros2_ws/moveit_ws/install/setup.bash
+#进行初始化
+```
 
 ### docker的网络访问
 
@@ -95,10 +107,10 @@ chmod 644 ~/.xsession
 所以容器想要访问外网，推荐通过宿主机代理转发，也就是在启动容器的时候执行
 ```
 docker run -it \
-  -e HTTP_PROXY=http://127.0.0.1:7897 \
-  -e HTTPS_PROXY=http://127.0.0.1:7897 \
-  -e http_proxy=http://127.0.0.1:7897 \
-  -e https_proxy=http://127.0.0.1:7897 \
+  -e HTTP_PROXY=http://192.168.151.57:7897 \
+  -e HTTPS_PROXY=http://192.168.151.57:7897 \
+  -e http_proxy==http://192.168.151.57:7897 \
+  -e https_proxy=http://192.168.151.57:7897 \
   xxx_image /bin/bash
 ```
 
@@ -128,4 +140,43 @@ docker info | grep -i proxy
 ```
 
 ## 存储资源
+
+### 数据池
+请将大型数据集移动到/mnt/dataset/用户名下，
+
+```bash
+#用户自行创建目录
+mkdir /mnt/dataset/用户名
+```
+该目录下所有人可读，只有用户可写
+
+### docker以及conda资源
+#### conda
+```bash
+#用户自行创建目录
+mkdir /mnt/intel_ssd/conda_global/envs/用户名
+```
+配置conda路径
+```bash
+#./bashrc
+export CONDA_ENVS_PATH=/mnt/intel_ssd/conda_global/envs/用户名
+```
+```bash
+#./condarc
+channels:
+  - defaults
+
+pkgs_dirs:
+  - /mnt/intel_ssd/conda_pkgs
+envs_dirs:
+  - /mnt/intel_ssd/conda_global/envs/用户名
+```
+#### docker
+现在似乎用户层不需要任何操作，制作的.tar镜像文件可以存放至/mnt/dataset/docker下
+
+### 用户目录资源
+为了保证系统盘（只有1T）的持续可用性，请大家经常检查一下自己的个人目录，观察是否有一些大型资源放置到了该目录下
+
+建议数据放置到/mnt/dataset/下
+
 

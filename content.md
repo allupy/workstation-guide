@@ -138,6 +138,37 @@ sudo mount -a
       
 ```
 
+### 机械盘数据池管理
+使用mergerfs管理几块机械盘作为数据硬盘
+mergerfs 会：把多个目录“叠加”成一个虚拟目录，使用户看到的是一个大目录 /mnt/dataset，实际文件仍然存储在各自的磁盘上，写入时按策略选择目标磁盘（默认最空的盘），读取时自动从对应磁盘读取
+
+#### 开机自动挂载
+```bash
+sudo nano /etc/fstab
+
+/mnt/disk_sda:/mnt/disk_sdc:/mnt/disk_sdd:/mnt/disk_sde /mnt/dataset fuse.mergerfs defaults,allow_other,use_ino,nonempty 0 0
+
+sudo mount -a #测试是否成功
+
+```
+#### 权限管理
+方案：使用“共享目录 + 用户独立子目录”权限模型
+
+```bash
+sudo chmod 1777 /mnt/dataset #用户可以创建自己的目录，但不能删除或修改别人的目录
+```
+用户创建自己的目录
+```bash
+mkdir /mnt/dataset/liupei2 #创建者自动成为所有人，其他用户：只读、不能写、不能删
+```
+
+用户允许可写
+```bash
+chmod 755 /mnt/dataset/用户名 #允许特定用户可写
+chmod 775 /mnt/dataset/用户名 #允许同组可写
+```
+
+
 ## 4\. 公共资源路径
 
 OmniLRS 镜像存放目录：
